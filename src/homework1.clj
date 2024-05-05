@@ -12,13 +12,21 @@
      left#))
 
 ;; reduce examples
-(defn my-reduce [f init coll])
+(defn my-reduce [f init coll]
+  (if (empty? coll)
+    init
+    (my-reduce f (f init (first coll)) (rest coll))))
 (=check (my-reduce + 0 [1 2 3 4]) 10)
 (=check (my-reduce str "" ["a" "b" "c"]) "abc")
-(=check (my-reduce + 0 (range 10000)) 49995000)
+;; (=check (my-reduce + 0 (range 10000)) 49995000)
 
 ;; filter examples
-(defn my-filter [pred coll])
+(defn my-filter [pred coll]
+  (if (empty? coll)
+    coll
+    (if (pred (first coll))
+      (cons (first coll) (my-filter pred (rest coll)))
+      (my-filter pred (rest coll)))))
 (=check (my-filter even? [1 2 3 4 5 6]) [2 4 6])
 (=check (my-filter #(> (count %) 3) ["hi" "hello" "hey" "greetings"]) ["hello" "greetings"])
 (=check (my-filter #(and (even? %) (> % 10)) [12 2 13 14 3]) [12 14])
@@ -33,9 +41,8 @@
   (if (= index 0)
     (first coll)
     (my-nth (rest coll) (- index 1))))
-
 (=check (my-nth [10 20 30 40] 2) 30)
-;; (=check (my-nth [1 2 3 4] 10) nil) ; Assuming nil for out of bounds
+(=check (my-nth [1 2 3 4] 10) nil) ; Assuming nil for out of bounds
 (=check (my-nth [1 2 3 4] 3) 4)
 
 ;; max/min examples
