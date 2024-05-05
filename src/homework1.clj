@@ -29,7 +29,11 @@
 (=check (count (my-concat (range 5000) (range 5000 10000))) 10000)
 
 ;; nth examples
-(defn my-nth [coll index])
+(defn my-nth [coll index]
+  (if (= index 0)
+    (first coll)
+    (my-nth (rest coll) (- index 1))))
+
 (=check (my-nth [10 20 30 40] 2) 30)
 ;; (=check (my-nth [1 2 3 4] 10) nil) ; Assuming nil for out of bounds
 (=check (my-nth [1 2 3 4] 3) 4)
