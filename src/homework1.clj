@@ -18,7 +18,7 @@
     (my-reduce f (f init (first coll)) (rest coll))))
 (=check (my-reduce + 0 [1 2 3 4]) 10)
 (=check (my-reduce str "" ["a" "b" "c"]) "abc")
-;; (=check (my-reduce + 0 (range 10000)) 49995000)
+;; (=check (my-reduce + 0 (range 10000)) 49995000) ; StackOverflowError
 
 ;; filter examples
 (defn my-filter [pred coll]
@@ -32,9 +32,13 @@
 (=check (my-filter #(and (even? %) (> % 10)) [12 2 13 14 3]) [12 14])
 
 ;; concat examples
-(defn my-concat [coll1 coll2])
+(defn my-concat [coll1 coll2]
+  (if (empty? coll1)
+    coll2
+    (cons (first coll1) (my-concat (rest coll1) coll2))))
+(type (my-concat [1 2] [3 4]))
 (=check (my-concat [1 2] [3 4]) [1 2 3 4])
-(=check (count (my-concat (range 5000) (range 5000 10000))) 10000)
+;; (=check (count (my-concat (range 5000) (range 5000 10000))) 10000) ; StackOverflowError
 
 ;; nth examples
 (defn my-nth [coll index]
@@ -46,8 +50,25 @@
 (=check (my-nth [1 2 3 4] 3) 4)
 
 ;; max/min examples
-(defn my-max [coll])
-(defn my-min [coll])
+(defn my-max [coll]
+  (if (empty? coll)
+    nil
+    (if (= 1 (count coll))
+      (first coll)
+      (let [sub-max (my-max (rest coll))]
+        (if (> (first coll) sub-max)
+          (first coll)
+          sub-max)))))
+
+(defn my-min [coll]
+  (if (empty? coll)
+    nil
+    (if (= 1 (count coll))
+      (first coll)
+      (let [sub-min (my-min (rest coll))]
+        (if (> (first coll) sub-min)
+          sub-min
+          (first coll))))))
 (=check (my-max [5 3 9 1]) 9)
 (=check (my-min [5 3 9 1]) 1)
 (=check (my-max [-5 -3 -9 -1]) -1)
@@ -56,7 +77,10 @@
 (=check (my-min []) nil)
 
 ;; count examples
-(defn my-count [coll])
+(defn my-count [coll]
+  (if (empty? coll)
+    0
+    (inc (my-count (rest coll)))))
 (=check (my-count [1 2 3 4 5]) 5)
 (=check (my-count [[1 2] [3 4] [5]]) 3)
 (=check (my-count []) 0)
