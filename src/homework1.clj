@@ -85,8 +85,11 @@
 (=check (my-count [[1 2] [3 4] [5]]) 3)
 (=check (my-count []) 0)
 
-;; take examples
-(defn my-take [n coll])
+;; take exampless
+(defn my-take [n coll]
+  (if (or (<= n 0) (empty? coll))
+    ()
+    (cons (first coll) (my-take  (- n 1) (rest coll)))))
 (=check (my-take 3 [5 4 3 2 1]) [5 4 3])
 
 ;; merge examples
