@@ -106,13 +106,19 @@
 (=check (my-group-by count ["one" "two" "three" "four"]) {3 ["one" "two"], 5 ["three"], 4 ["four"]})
 
 ;; keys examples
-(defn my-keys [map])
+(defn my-keys [map]
+  (if (empty? map)
+    []
+    (cons (key (first map)) (my-keys (rest map)))))
 (=check (my-keys {:a 1 :b 2 :c 3}) [:a :b :c])
 (=check (my-keys {:foo "bar" :baz "qux"}) [:foo :baz])
 (=check (my-keys {}) [])
 
 ;; vals examples
-(defn my-vals [map])
+(defn my-vals [map]
+  (if (empty? map)
+    []
+    (cons (val (first map)) (my-vals (rest map)))))
 (=check (my-vals {:a 1 :b 2 :c 3}) [1 2 3])
 (=check (my-vals {:foo "bar" :baz "qux"}) ["bar" "qux"])
 (=check (my-vals {}) [])
