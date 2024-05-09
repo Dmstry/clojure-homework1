@@ -132,7 +132,14 @@
 (=check (my-vals {}) [])
 
 ;; select-keys examples
-(defn my-select-keys [map keys])
+(defn my-select-keys [map keys]
+  (if (seq keys)
+    (let [key (first keys)
+          entry (find map key)]
+      (if entry
+        (conj (my-select-keys map (rest keys)) entry)
+        (my-select-keys map (rest keys))))
+    {}))
 (=check (my-select-keys {:a 1 :b 2 :c 3} [:a :c]) {:a 1 :c 3})
 (=check (my-select-keys {:name "Alice" :age 30 :gender "Female"} [:name :age]) {:name "Alice", :age 30})
 (=check (my-select-keys {:foo "bar" :hello "world"} [:foo]) {:foo "bar"})
