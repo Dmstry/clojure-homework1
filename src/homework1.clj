@@ -93,7 +93,15 @@
 (=check (my-take 3 [5 4 3 2 1]) [5 4 3])
 
 ;; merge examples
-(defn my-merge [map1 map2])
+(defn my-merge [map1 map2]
+  (if (empty? map1)
+    map2
+    (let [[k v] (first map1)
+          rest-map1 (dissoc map1 k)
+          new-value (if (contains? map2 k)
+                      (get map2 k)
+                      v)]
+      (assoc (my-merge rest-map1 map2) k new-value))))
 (=check (my-merge {:a 1 :b 2} {:b 3 :c 4}) {:a 1 :b 3 :c 4})
 (=check (my-merge {:foo "bar"} {:foo "baz", :hello "world"}) {:foo "baz", :hello "world"})
 (=check (my-merge {} {:a 1}) {:a 1})
