@@ -107,7 +107,11 @@
 (=check (my-merge {} {:a 1}) {:a 1})
 
 ;; group-by examples
-(defn my-group-by [f coll])
+(defn my-group-by [f coll]
+  (reduce (fn [m x]
+            (let [k (f x)]
+              (assoc m k (conj (get m k []) x))))
+          {} coll))
 (=check (my-group-by :type [{:type :a :value 1} {:type :b :value 2} {:type :a :value 3}])
         {:a [{:type :a :value 1} {:type :a :value 3}], :b [{:type :b :value 2}]})
 (=check (my-group-by even? [1 2 3 4 5 6]) {true [2 4 6], false [1 3 5]})
